@@ -1,16 +1,20 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "eslint:recommended",
-    ],
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-};
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    babelOptions: {
+      configFile: './babel.config.json'
+    }
+  },
+  env: {
+    browser: true,
+    node: true,
+    es6: true
+  },
+  extends: ['eslint:recommended', 'google'],
+  rules: {
+    'semi': 'off',
+    'comma-dangle': 'off',
+    'require-jsdoc': 'off',
+    'linebreak-style': [0, 'error', 'windows']
+  }
+}

@@ -2,7 +2,9 @@
 @import 'mixins';
 
 .excel__formula {
-    position: absolute;
+    position: fixed;
+    background: white;
+    z-index: 1000;
     left: 0;
     right: 0;
     top: $header-height + $toolbar-height;

@@ -2,7 +2,9 @@
 @import 'mixins';
 
 .excel__header {
-    position: absolute;
+    position: fixed;
+    background: white;
+    z-index: 1000;
     top: 0;
     right: 0;
     left: 0;
@@ -26,7 +28,7 @@
             border: 1px solid $border-color;
         }
         &:focus {
-            border: 2px solid #1a73e8;
+            border: 2px solid $selected-color;
         }
     }
 

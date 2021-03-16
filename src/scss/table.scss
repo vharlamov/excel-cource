@@ -1,12 +1,11 @@
-@import 'variables';
+@import '_variables';
 @import 'mixins';
 
 .excel__table {
-    position: absolute;
+    position: relative;
     right: 0;
     left: 0;
     top: $header-height + $toolbar-height + $formula-height;
-    overflow-x: auto;
     padding-bottom: 2px;
 
     .row {
@@ -15,8 +14,14 @@
         height: $row-height;
         min-height: 20px;
     }
+    
+    /* .head-row {
+        position: absolute;
+        top: 0; 
+    } */
 
     .row-info {
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -25,6 +30,7 @@
         border: 1px solid $border-color;
         background: #f8f9fa;
         border-top: none;
+        user-select: none;
     }
 
     .column {
@@ -38,6 +44,8 @@
         height: 100%;
         border-top: 0;
         border-left: 0;
+        position: relative;
+        user-select: none;
     }
 
     .row-data {
@@ -46,7 +54,6 @@
 
     .cell {
         padding: 5px;
-        min-width: 40px;
         min-width: 40px;
         width: $cell-with;
         justify-content: center;
@@ -60,9 +67,41 @@
         
         &.selected { 
             border: none;
-            outline: 2px solid #3c74ff;
+            outline: 2px solid $selected-color;
             z-index: 2;
         }  
+    }
+
+    .col-resize, .row-resize {
+        position: absolute;
+        background: $selected-color;
+        opacity: 0;
+
+        &:hover {
+            opacity: 1!important;
+        }
+    }
+
+    .col-resize {
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 3px;
+
+        &:hover {
+            cursor: col-resize;
+        }
+    }
+    
+    .row-resize {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+
+        &:hover {
+            cursor: row-resize;
+        }
     }
     
 }

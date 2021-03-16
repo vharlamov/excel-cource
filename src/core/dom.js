@@ -63,7 +63,6 @@ class Dom {
 }
 
 export function $(selector) {
-    // console.log(new Dom(selector))
     return new Dom(selector)
 }
 
@@ -72,7 +71,8 @@ $.create = (tagName, classes = '') => {
     if (classes) {
         el.classList.add(classes)
     }
-    // console.log(el)
+    
     return $(el)
 }
+
 

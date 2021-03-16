@@ -20,4 +20,3 @@ export class Table extends ExcelComponent {
         resizeTable(this.$root, event.target)
     }
  }
-

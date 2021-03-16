@@ -57,3 +57,4 @@ export function createTable(rowsCount = 25) {
     } 
     return rows.join('')
 }
+

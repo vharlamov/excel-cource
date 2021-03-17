@@ -29,7 +29,9 @@ function createRow(info, cells) {
             ${info}
             ${resizer}
             </div>
-            <div class="row-data">${cells.join('')}</div>
+            <div class="row-data" data-rowindex="${info}">
+            ${cells.join('')}
+            </div>
         </div>`
 }
 

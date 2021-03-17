@@ -2,7 +2,9 @@ import {$} from '@core/dom'
 import {shouldResize} from './table.functions'
 
 
-export const resizeTable = ($root, $target) => {
+export const resizeTable = ($root, event) => {
+    const $target = event.target
+
     if (shouldResize($target)) {
         const resType = $target.dataset.resize
         const $resizer = $($target)

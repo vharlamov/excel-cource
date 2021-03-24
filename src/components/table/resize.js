@@ -15,12 +15,12 @@ export const resizeTable = ($root, event) => {
             opacity: 0.5
         })
 
-        const index = resType === 'col'
-            ? $parent.data.index
+        const colIndex = resType === 'col'
+            ? $parent.data.col
             : null
 
-        const entireCol = 
-            $root.findAll(`[data-index="${index}"]`)
+            const entireCol = 
+            $root.findAll(`[data-col="${colIndex}"]`)
 
             let deltaX = 0
             let deltaY = 0

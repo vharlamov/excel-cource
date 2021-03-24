@@ -1,78 +1,97 @@
 import {$} from '@core/dom'
+import { parseId } from './table.functions'
 
-export function toSelect($root, event) {
-    const $target = event.target
-    const $parent = $target.parentElement
-    const type = event.type
-    const cellIndex = $target.dataset.index
-    const rowIndex = $target.parentElement.dataset.rowindex
+export class TableSelect {
+    static className = 'selected'
 
-    if (type === 'click') {
-        select()
-    } else if (type === 'keydown') {
-        const keyDir = event.key
-        shift(keyDir)
-    }
-    
-    function select() {
-        if ($('.selected').$el) {
-        $('.selected').$el.classList.remove('selected')
-        }
-
-        $target.classList.add('selected')
+    constructor() {
+        this.group = []
+        this.current = null
     }
 
-    function shift(keyDir) {
-        if ($('.selected').$el) {
-        $('.selected').$el.classList.remove('selected')
+    shift($root, event) {
+        event.preventDefault()
+        let dir = event.key
+
+        if (dir.indexOf('Arrow') !== 0 
+            && dir.indexOf('Tab') !== 0 
+            && dir.indexOf('Enter') !== 0) {
+            return
+        }
+        
+        if (event.shiftKey && dir === 'Tab') {
+            dir = 'ArrowLeft'
+        } else if (event.shiftKey && dir === 'Enter') {
+            dir = 'ArrowUp'
         }
 
-        let $newTarget = null
-        let $newRow = null
-        let $newCell = null
+        const $el = $root.find('.' + TableSelect.className)
 
-        switch (keyDir) {
-            case 'ArrowUp':
-                $newRow = $(`[data-rowindex="${+rowIndex - 1}"]`)
-                if ($newRow.$el) {
-                    $newTarget = 
-                    $newRow.$el.querySelector(`[data-index="${cellIndex}"]`)
-                    changeFocus()
-                }
-                break 
+        const cellIndex = $el.data.id.split(':')
 
+        const row = +cellIndex[0]
+        const cell = +cellIndex[1]
+
+        let $nextEl
+
+        switch (dir) {
+            case 'ArrowUp': 
+                $nextEl = $root.find(`[data-id="${row - 1}:${cell}"]`)
+            break
             case 'ArrowDown':
-                $newRow = $(`[data-rowindex="${+rowIndex + 1}"]`)
-                if ($newRow.$el) {
-                    $newTarget = 
-                    $newRow.$el.querySelector(`[data-index="${cellIndex}"]`)
-                    changeFocus()
-                }
-                break
-
+            case 'Enter':
+                $nextEl = $root.find(`[data-id="${row + 1}:${cell}"]`)
+            break
             case 'ArrowLeft':
-                $newCell = $(`[data-index="${+cellIndex - 1}"]`)
-                if ($newCell.$el) {
-                    $newTarget = 
-                    $parent.querySelector(`[data-index="${+cellIndex - 1}"]`)
-                    changeFocus()
-                }
-                break
-
+                $nextEl = $root.find(`[data-id="${row}:${cell - 1}"]`)
+            break
             case 'ArrowRight':
-                $newCell = $(`[data-index="${+cellIndex + 1}"]`)
-                if ($newCell.$el) {
-                    $newTarget = 
-                    $parent.querySelector(`[data-index="${+cellIndex + 1}"]`)
-                    changeFocus()
-                }
-                break
+            case 'Tab':
+                $nextEl = $root.find(`[data-id="${row}:${cell + 1}"]`)
+        } 
+        
+        if ($nextEl.$el) {
+            this.select($root, $nextEl)
+        } 
+    }
+
+    select($root, $el) {
+        this.clear($root)
+        this.group.push($el)
+        this.current = $el
+        $el.addClass(TableSelect.className)
+        $el.$el.focus()
+    }
+
+    selectGroup($root, $el) {
+        const start = parseId(this.current)
+        const end = parseId($el)
+
+        this.clear($root)
+
+        const rowMin = Math.min(start[0], end[0])
+        const rowMax = Math.max(start[0], end[0])
+        const cellMin = Math.min(start[1], end[1])
+        const cellMax = Math.max(start[1], end[1])
+
+        for (let row=rowMin; row<=rowMax; row++) {
+            for (let cell=cellMin; cell<=cellMax; cell++) {
+                const $addedCell = $root.find(`[data-id="${row}:${cell}"]`)
+                this.group.push($addedCell)
+            }
+        }
+            
+        this.group.forEach(el => el.addClass(TableSelect.className))
+    }
+
+    clear($root) {
+        const allSelected = $root.findAll('.' + TableSelect.className)
+
+        for (let elem of allSelected) {
+            elem.classList.remove(TableSelect.className)
         }
 
-        function changeFocus() {
-            $newTarget.focus()
-            $newTarget.classList.add('selected')
-        }
-}
+        this.group = []
+    }
 }
 

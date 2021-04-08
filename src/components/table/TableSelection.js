@@ -1,5 +1,5 @@
 import {$} from '@core/dom'
-import { parseId } from './table.functions'
+import { parseId, Range } from './table.functions'
 
 export class TableSelect {
     static className = 'selected'
@@ -9,23 +9,17 @@ export class TableSelect {
         this.current = null
     }
 
-    shift($root, event) {
-        event.preventDefault()
+    arrow($root, event) {
         let dir = event.key
 
-        if (dir.indexOf('Arrow') !== 0 
-            && dir.indexOf('Tab') !== 0 
-            && dir.indexOf('Enter') !== 0) {
+
+        if (dir.indexOf('Arrow') !== 0) {
             return
         }
+        event.preventDefault()
         
-        if (event.shiftKey && dir === 'Tab') {
-            dir = 'ArrowLeft'
-        } else if (event.shiftKey && dir === 'Enter') {
-            dir = 'ArrowUp'
-        }
-
-        const $el = $root.find('.' + TableSelect.className)
+        let $el = $root.find('.' + TableSelect.className)
+        $el = $el ? $el : this.current
 
         const cellIndex = $el.data.id.split(':')
 
@@ -39,59 +33,103 @@ export class TableSelect {
                 $nextEl = $root.find(`[data-id="${row - 1}:${cell}"]`)
             break
             case 'ArrowDown':
-            case 'Enter':
                 $nextEl = $root.find(`[data-id="${row + 1}:${cell}"]`)
             break
             case 'ArrowLeft':
                 $nextEl = $root.find(`[data-id="${row}:${cell - 1}"]`)
             break
             case 'ArrowRight':
-            case 'Tab':
                 $nextEl = $root.find(`[data-id="${row}:${cell + 1}"]`)
         } 
         
         if ($nextEl.$el) {
-            this.select($root, $nextEl)
+            if (event.shiftKey) {
+                this.group.push($nextEl)
+                this.groupRect($root)
+                console.log(this.group)
+            } else {
+                this.select($root, $nextEl) 
+            }
         } 
     }
 
     select($root, $el) {
-        this.clear($root)
+        this.clear()
+        this.clearRect()
         this.group.push($el)
         this.current = $el
         $el.addClass(TableSelect.className)
         $el.$el.focus()
+        this.groupRect($root)
     }
 
     selectGroup($root, $el) {
         const start = parseId(this.current)
         const end = parseId($el)
 
-        this.clear($root)
+        this.clear()
 
-        const rowMin = Math.min(start[0], end[0])
-        const rowMax = Math.max(start[0], end[0])
-        const cellMin = Math.min(start[1], end[1])
-        const cellMax = Math.max(start[1], end[1])
+        const rowDiap = [start[0], end[0]].sort((a, b) => a - b)
+        const cellDiap = [start[1], end[1]].sort((a, b) => a - b)
 
-        for (let row=rowMin; row<=rowMax; row++) {
-            for (let cell=cellMin; cell<=cellMax; cell++) {
+        const rowRange = new Range(...rowDiap)
+        const cellRange = new Range(...cellDiap)
+
+        for (let row of rowRange) {
+            for (let cell of cellRange) {
                 const $addedCell = $root.find(`[data-id="${row}:${cell}"]`)
                 this.group.push($addedCell)
             }
         }
             
         this.group.forEach(el => el.addClass(TableSelect.className))
+        
+        this.groupRect($root)
     }
 
-    clear($root) {
-        const allSelected = $root.findAll('.' + TableSelect.className)
+    groupRect($root) {
+        this.clearRect()
+        
+        let gTop = this.group[0].getCoords().top
+        let gLeft = this.group[0].getCoords().left
+        let gBottom = this.group[this.group.length - 1]
+            .getCoords().bottom
+        let gRight = this.group[this.group.length - 1]
+            .getCoords().right
 
-        for (let elem of allSelected) {
-            elem.classList.remove(TableSelect.className)
+        if (this.group.length) {
+            const $selectRect = $.create('div', 'selected_rect')
+            $selectRect.css({
+                position: 'absolute',
+                top: gTop - 97 + 'px',
+                left: gLeft + 'px',
+                height: gBottom - gTop - 2 + 'px',
+                width: gRight - gLeft - 1 + 'px'
+            })
+
+            $root.append($selectRect.$el)
         }
+    }
 
+    clearGroupText() {
+        this.group.forEach(el => el.text(''))
+    }
+
+    clear() {
+        this.group.forEach(el => {
+            if (el) {
+                el.removeClass([TableSelect.className])
+            }
+        })
         this.group = []
+    }
+
+    clearRect() {
+        if ($('.selected_rect').$el) {
+            let $sr = $('.selected_rect')
+            $sr.$el.remove()
+            $sr = null
+        }
     }
 }
 

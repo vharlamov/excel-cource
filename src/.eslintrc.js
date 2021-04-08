@@ -24,6 +24,7 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-array-constructor': 'off',
     'prefer-const': 'off',
-    'linebreak-style': [0, 'error', 'windows']
+    'linebreak-style': [0, 'error', 'windows'],
+    'no-debugger': 'off'
   }
 }

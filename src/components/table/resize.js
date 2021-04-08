@@ -1,8 +1,10 @@
 import {$} from '@core/dom'
+import { Table } from './Table'
 import {shouldResize} from './table.functions'
+import { TableSelect } from './TableSelection'
 
 
-export const resizeTable = ($root, event) => {
+export const resizeTable = ($root, event, selection) => {
     const $target = event.target
 
     if (shouldResize($target)) {
@@ -58,6 +60,10 @@ export const resizeTable = ($root, event) => {
                 el.style.width = value + 'px'
             })
 
+            if (selection.group.length > 1) {
+                selection.groupRect($root)
+            }
+
             $resizer.css({
                 position: null,
                 opacity: null,
@@ -71,4 +77,5 @@ export const resizeTable = ($root, event) => {
         }
     } 
 }
+
 

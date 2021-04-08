@@ -1,8 +1,12 @@
 import {$} from '@core/dom'
+import { Table } from './Table'
 import {shouldResize} from './table.functions'
+import { TableSelect } from './TableSelection'
 
 
-export const resizeTable = ($root, $target) => {
+export const resizeTable = ($root, event, selection) => {
+    const $target = event.target
+
     if (shouldResize($target)) {
         const resType = $target.dataset.resize
         const $resizer = $($target)
@@ -13,12 +17,12 @@ export const resizeTable = ($root, $target) => {
             opacity: 0.5
         })
 
-        const index = resType === 'col'
-            ? $parent.data.index
+        const colIndex = resType === 'col'
+            ? $parent.data.col
             : null
 
-        const entireCol = 
-            $root.findAll(`[data-index="${index}"]`)
+            const entireCol = 
+            $root.findAll(`[data-col="${colIndex}"]`)
 
             let deltaX = 0
             let deltaY = 0
@@ -56,6 +60,10 @@ export const resizeTable = ($root, $target) => {
                 el.style.width = value + 'px'
             })
 
+            if (selection.group.length > 1) {
+                selection.groupRect($root)
+            }
+
             $resizer.css({
                 position: null,
                 opacity: null,
@@ -69,4 +77,5 @@ export const resizeTable = ($root, $target) => {
         }
     } 
 }
+
 

@@ -1,5 +1,13 @@
 {
     "editor.linkedEditing": true,
     "editor.wordWrap": "bounded",
-    "editor.wordWrapColumn": 90
+    "editor.wordWrapColumn": 90,
+    "lit-html.tags": [
+        "html",
+        "raw",
+        "div",
+        "ul",
+        "ol",
+        "li"
+    ]
 }

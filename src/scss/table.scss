@@ -66,11 +66,18 @@
         outline: none;
         
         &.selected { 
-            border: none;
-            outline: 2px solid $selected-color;
+            // border: none;
+            // outline: 2px solid $selected-color;
             z-index: 2;
         }  
     }
+
+    .selected_rect {
+        pointer-events: none;
+        border: none;
+        outline: 2px solid $selected-color;
+        z-index: 2;
+}
 
     .col-resize, .row-resize {
         position: absolute;

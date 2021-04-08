@@ -13,6 +13,17 @@ class Dom {
             return this.$el.outerHTML.trim()
     }
 
+    text(text) {
+        if (typeof text === 'string') {
+            this.$el.textContent = text
+            return this
+        } 
+        if (this.$el.tagName.toLowerCase() === 'input') {
+            return this.$el.value.trim()
+        }
+        return this.$el.textContent.trim()
+    }
+
     clear() {
         this.html('')
         return this
@@ -22,7 +33,7 @@ class Dom {
         this.$el.addEventListener(eventType, callback)
     }
 
-    remove(eventType, callback) {
+    removeList(eventType, callback) {
         this.$el.removeEventListener(eventType, callback)
     }
 
@@ -44,9 +55,29 @@ class Dom {
         return this.$el.dataset
     }
 
-    css(styles = {}) {
-        Object.assign(this.$el.style, styles)
+    css(styles) {
+        if (styles) {
+            Object.assign(this.$el.style, styles)
+        } else {
+            return this.$el.style
+        }
         return this
+    }
+
+    addClass(className) {
+        this.$el.classList.add(className)
+        return this
+    }
+
+    removeClass(args) {
+        for (let arg of args) {
+            this.$el.classList.remove(arg)
+            }
+        return this
+    }
+
+    find(selector) {
+        return $(this.$el.querySelector(selector))
     }
 
     findAll(selector) {
@@ -58,7 +89,16 @@ class Dom {
     }
 
     getCoords() {
-        return this.$el.getBoundingClientRect()
+        const box = this.$el.getBoundingClientRect()
+
+        return {
+            top: box.top + pageYOffset,
+            left: box.left + pageXOffset,
+            bottom: box.bottom + pageYOffset,
+            right: box.right + pageXOffset,
+            width: box.width,
+            height: box.height
+        }
     }
 }
 

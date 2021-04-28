@@ -46,7 +46,6 @@ export class TableSelect {
             if (event.shiftKey) {
                 this.group.push($nextEl)
                 this.groupRect($root)
-                console.log(this.group)
             } else {
                 this.select($root, $nextEl) 
             }
@@ -60,6 +59,41 @@ export class TableSelect {
         this.current = $el
         $el.addClass(TableSelect.className)
         $el.$el.focus()
+        this.groupRect($root)
+    }
+
+    selectColumn($root, $el) {
+        this.clear()
+        this.clearRect()
+
+        const colIndex = $el.data.col
+        const entireCol = $root.findAll(`[data-col="${colIndex}"]`)
+        const cells = [...entireCol].slice(1)
+
+        cells.forEach(el => {
+            el.classList.add(TableSelect.className)
+            this.group.push($(el))
+        })
+
+        this.current = cells[0]
+        cells[0].focus()
+        this.groupRect($root)
+    }
+
+    selectRow($root, $el) {
+        this.clear()
+        this.clearRect()
+
+        const $parent = $el.closest('.row')
+        const cells = $parent.findAll('[data-type="cell"]')
+
+        cells.forEach(el => {
+            el.classList.add(TableSelect.className)
+            this.group.push($(el))
+        })
+
+        this.current = cells[0]
+        cells[0].focus()
         this.groupRect($root)
     }
 
@@ -124,12 +158,20 @@ export class TableSelect {
         this.group = []
     }
 
+    get ids() {
+        return this.group.map(el => el.data.id)
+    }
+
     clearRect() {
         if ($('.selected_rect').$el) {
             let $sr = $('.selected_rect')
             $sr.$el.remove()
             $sr = null
         }
+    }
+
+    applyStyle(style) {
+        this.group.forEach(el => el.css(style))
     }
 }
 

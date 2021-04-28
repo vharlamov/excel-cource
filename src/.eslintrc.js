@@ -12,6 +12,7 @@ module.exports = {
   },
   extends: ['eslint:recommended', 'google'],
   rules: {
+    'quotes': 'off',
     'semi': 'off',
     'comma-dangle': 'off',
     'require-jsdoc': 'off',
@@ -25,6 +26,8 @@ module.exports = {
     'no-array-constructor': 'off',
     'prefer-const': 'off',
     'linebreak-style': [0, 'error', 'windows'],
-    'no-debugger': 'off'
+    'no-debugger': 'off',
+    'no-case-declarations': 'off',
+    'no-invalid-this': 'off'
   }
 }

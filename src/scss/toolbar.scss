@@ -15,6 +15,6 @@
     z-index: 1000;
 
     .button {
-        @include button(green);
+        @include button(rgb(197, 2, 60));
     }
 }

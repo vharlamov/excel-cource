@@ -9,5 +9,8 @@
         "ul",
         "ol",
         "li"
-    ]
+    ],
+    "diffEditor.codeLens": true,
+    "diffEditor.wordWrap": "on",
+    "autoimport.filesToScan": "**/*.{js,ts,tsx}"
 }

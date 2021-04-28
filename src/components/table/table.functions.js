@@ -6,6 +6,14 @@ export function isCell(event) {
    return event.target.dataset.type === 'cell'
 }
 
+export function isColumn(event) {
+   return event.target.className === 'column'
+}
+
+export function isRow(event) {
+   return event.target.className === 'row-info'
+}
+
 export function parseId($el) {
    return $el.data.id.split(':').map(e => +e)
 }

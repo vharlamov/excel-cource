@@ -1,5 +1,6 @@
 import {ExcelComponent} from '@core/ExcelComponent';
 import { $ } from '../../core/dom';
+import { parse } from '../../core/parse';
 
 export class Formula extends ExcelComponent {
     static className = 'excel__formula'
@@ -7,9 +8,8 @@ export class Formula extends ExcelComponent {
     constructor($root, options) {
         super($root, {
             name: 'Formula',
-            listeners: [
-                'input', 
-                'keydown'],
+            listeners: ['input', 'keydown', 'mousedown'],
+            subscribe: ['currentText', 'formulaState'],
             ...options
             }   
         )
@@ -32,16 +32,16 @@ export class Formula extends ExcelComponent {
 
     onInput(event) {
         this.$emit('formulaText', $(event.target).text())
-      }
-    
+    }
+
+    onMousedown(event) {
+        this.$emit('formulaText', $(event.target).text())
+    }
+
     init() {
         super.init()
 
         this.$formula = this.$root.find('[data-type="formula"]')
-
-        this.$on('tableText', text => {
-            this.$formula.text(text)
-        })
 
         this.$on('tableChangeFocus', () => {
             this.$formula.$el.focus()

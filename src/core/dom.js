@@ -64,6 +64,13 @@ class Dom {
         return this
     }
 
+    getStyles(styles = []) {
+        return styles.reduce((acc, s) => {
+            acc[s] = this.$el.style[s]
+            return acc
+        }, {})
+    }
+
     addClass(className) {
         this.$el.classList.add(className)
         return this
@@ -99,6 +106,14 @@ class Dom {
             width: box.width,
             height: box.height
         }
+    }
+
+    attr(name, value) {
+        if (value) {
+            this.$el.setAttribute(name, value)
+            return this
+        }
+        return this.$el.getAttribute(name)
     }
 }
 

@@ -1,10 +1,8 @@
 import {$} from '@core/dom'
-import { Table } from './Table'
 import {shouldResize} from './table.functions'
-import { TableSelect } from './TableSelection'
-
 
 export const resizeTable = ($root, event, selection) => {
+    return new Promise(resolve => {
     const $target = event.target
 
     if (shouldResize($target)) {
@@ -28,8 +26,8 @@ export const resizeTable = ($root, event, selection) => {
             let deltaY = 0
 
         document.onmousemove = e => {
-            deltaX = e.clientX - coords.right
-            deltaY = e.clientY - coords.bottom
+            deltaX = e.pageX - coords.right
+            deltaY = e.pageY - coords.bottom
 
             if (resType === 'col') {
                 const value = coords.width + deltaX
@@ -37,7 +35,7 @@ export const resizeTable = ($root, event, selection) => {
 
                 $resizer.css({
                     position: 'fixed',
-                    left: e.clientX - $resizer.getCoords().width + 'px',
+                    left: e.pageX - $resizer.getCoords().width + 'px',
                 })
             } else if (resType === 'row') {
                 const value = coords.height + deltaY
@@ -45,7 +43,7 @@ export const resizeTable = ($root, event, selection) => {
 
                 $resizer.css({
                     position: 'fixed',
-                    top: e.clientY - $resizer.getCoords().height + 'px',
+                    top: e.pageY - $resizer.getCoords().height + 'px',
                 })
             }
         }
@@ -60,9 +58,15 @@ export const resizeTable = ($root, event, selection) => {
                 el.style.width = value + 'px'
             })
 
-            if (selection.group.length > 1) {
-                selection.groupRect($root)
-            }
+            resolve({
+                type: resType,
+                id: resType === 'col' 
+                    ? $parent.data.col 
+                    : $parent.data.row,
+                value: resType === 'col' 
+                    ? $parent.getCoords().width 
+                    : $parent.getCoords().height
+            })
 
             $resizer.css({
                 position: null,
@@ -76,6 +80,7 @@ export const resizeTable = ($root, event, selection) => {
             document.onmouseup = null
         }
     } 
+})
 }
 
 

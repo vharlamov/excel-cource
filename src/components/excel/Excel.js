@@ -1,10 +1,11 @@
 import {$} from '../../core/dom'
 import { Observer } from '../../core/Observer'
 import { StoreSubscriber } from '../../core/StoreSubscriber'
+import * as actions from '../../redux/actions'
+import { applyHeaderState, applyTableState } from '../../redux/applyState'
 
 export class Excel {
-  constructor(selector, options) {
-    this.$el = $(selector)
+  constructor(options) {
     this.components = options.components || []
     this.store = options.store
     this.observer = new Observer
@@ -12,7 +13,7 @@ export class Excel {
   }
 
   getRoot() {
-    const $root = $.create('div', 'excel')
+    this.$root = $.create('div', 'excel')
 
     const componentOptions = {
       observer: this.observer,
@@ -24,18 +25,24 @@ export class Excel {
       const component = new Component($el, componentOptions)
 
       $el.html(component.toHTML())
-      $root.append($el)
+      this.$root.append($el)
       return component
     });
 
-    return $root
+    return this.$root
   }
 
-  render() {
-    this.$el.append(this.getRoot())
+  init(params) {
+    const state = this.store.getState()
 
     this.subscriber.subscribeComponents(this.components)
-    this.components.forEach(component => component.init());
+    this.components.forEach(component => component.init())
+
+    applyTableState(this.$root, state, params)
+    applyHeaderState(this.$root, state, params)
+
+    this.store.dispatch(actions.clearState())
+    this.store.dispatch(actions.updateDate())
   }
 
   destroy() {

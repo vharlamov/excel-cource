@@ -12,13 +12,8 @@
         display: flex;
         flex-direction: row;
         height: $row-height;
-        min-height: 20px;
+        min-height: 24px;
     }
-    
-    /* .head-row {
-        position: absolute;
-        top: 0; 
-    } */
 
     .row-info {
         position: relative;
@@ -64,10 +59,9 @@
         color: #111;
         white-space: nowrap;
         outline: none;
+        white-space: pre-wrap;
         
         &.selected { 
-            // border: none;
-            // outline: 2px solid $selected-color;
             z-index: 2;
         }  
     }

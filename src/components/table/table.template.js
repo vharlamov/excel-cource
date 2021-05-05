@@ -1,13 +1,7 @@
-import { defaultStyles } from "../../constants"
-import { createStore } from "../../core/createStore"
-import { storage, toDashStyle } from "../../core/utils"
-import { rootReduser } from "../../redux/rootReduser"
-
 const CODES = {
     'A': 65,
     'Z': 90
 }
-const store = createStore(rootReduser, storage('excel-state'))
 
 function createCells(row, state) {
     return function(_, cell) {
@@ -17,7 +11,7 @@ function createCells(row, state) {
             : ''
         return `
         <div class="cell"
-            contenteditable="true" 
+            contenteditable="true"
             data-type = "cell" 
             data-col="${cell}" 
             data-id="${row}:${cell}"
@@ -47,7 +41,7 @@ function createRow(info, cells) {
         : ''
 
     return `
-        <div class="row${head}" data-type="resizable" data-row="${info}">
+        <div class="row${head}" data-type="resizable" data-row="${info - 1}">
             <div class="row-info">
             ${rowNum}
             ${resizer}

@@ -29,6 +29,14 @@ export function createButtons(state) {
                 : 'underline'}
         },
         {
+            icon: '',
+            active: null,
+            value: null,
+            style: 'pointer-events: none',
+            content: ' | '
+        },             
+
+        {
             icon: 'format_align_left',
             active: state.textAlign === 'left',
             value: {textAlign: 'left'}
@@ -42,7 +50,36 @@ export function createButtons(state) {
             icon: 'format_align_right',
             active: state.textAlign === 'right',
             value: {textAlign: 'right'}
-        }             
+        },             
+        {
+            icon: '',
+            active: null,
+            value: null,
+            style: 'pointer-events: none',
+            content: ' | '
+        }, 
+        {
+            icon: 'format_clear',
+            active: null,
+            value: 'clearStyles'
+        },             
+        {
+            icon: '',
+            active: null,
+            value: null,
+            style: 'pointer-events: none',
+            content: '|'
+        }, 
+        {
+            icon: 'sort_by_alpha',
+            active: null,
+            value: {sort: 'sortABC'}
+        },             
+        {
+            icon: 'filter_7',
+            active: null,
+            value: {sort: 'sortNum'}
+        },             
     ]
 return buttons.map(button => {
         const meta = `
@@ -50,10 +87,11 @@ return buttons.map(button => {
         data-value='${JSON.stringify(button.value)}'`
         
         return `
-        <div class='button ${button.active ? 'active' : ''}' 
-        ${meta}>
-        <i class='material-icons' ${meta}>${button.icon}
-        </i>
-        </div>`
+            <div class='button ${button.active ? 'active' : ''}'
+            style='${button.style}' 
+            ${meta}>
+                <i class='material-icons' ${meta}>${button.icon}
+                </i>${button.content ? button.content : ''}
+            </div>`
     }).join('')
 }

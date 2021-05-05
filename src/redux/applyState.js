@@ -1,44 +1,22 @@
-import { storage } from "../core/utils"
-import { initialState } from "./initialState"
+import { storage, storageName } from "../core/utils"
 
-const thisState = storage('excel-state')
-    ? storage('excel-state')
-    : initialState
-
-export function applyTableState($root) {
-    const cols = thisState.colState
-        ? Object.entries(thisState.colState)
+export function applyTableState($root, state, param) {
+    const cols = state.colState
+        ? Object.entries(state.colState)
         : []
-    const rows = thisState.rowState
-        ? Object.entries(thisState.rowState)
+    const rows = state.rowState
+        ? Object.entries(state.rowState)
         : []
-    const cellsData = thisState.dataState
-        ? Object.entries(thisState.dataState)
+    const cellsData = state.dataState
+        ? Object.entries(state.dataState)
         : []
 
-    const cellsStyle = thisState.styleState
-        ? Object.entries(thisState.styleState)
+    const cellsStyle = state.styleState
+        ? Object.entries(state.styleState)
         : []
 
-    const formulaData = thisState.formulaState
-    ? Object.entries(thisState.formulaState)
-    : []
-
-    for (let [key, value] of cellsData) {
-        if (!value) {
-            delete thisState.dataState[`${key}`]
-            delete thisState.formulaState[`${key}`]
-        }
-    }
-
-    for (let [key, value] of formulaData) {
-        if (!value || !thisState.dataState[`${key}`]) {
-            delete thisState.formulaState[`${key}`]
-        }
-    }
-
-    storage('excel-state', {})
-    storage('excel-state', thisState)
+    storage(storageName(param), {})
+    storage(storageName(param), state)
 
     for (let [key, value] of cols) {
         const entireCol = $root.findAll(`[data-col="${key}"]`)
@@ -63,8 +41,8 @@ export function applyTableState($root) {
     }
 }
 
-export function applyHeaderState($root) {
-    const headerText = thisState.headerState
+export function applyHeaderState($root, state) {
+    const headerText = state.headerState || 'Без названия'
 
     const headerEl = $root.find('input')
     headerEl.$el.value = headerText

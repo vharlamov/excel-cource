@@ -31,7 +31,7 @@ export class DomListener {
     removeDomListeners() {
         this.listeners.forEach(listener => {
             const method = getMethodName(listener)
-            this.$root.remove(listener, this[method])
+            this.$root.$el.remove(listener, this[method])
         })
     }
 }

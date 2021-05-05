@@ -50,6 +50,10 @@ export class Formula extends ExcelComponent {
         this.$on('tableSelect', text => {
             this.$formula.text(text)
         })
+
+        this.$on('tableChangeText', text => {
+            this.$formula.text(text)
+        })
     }
 }
 

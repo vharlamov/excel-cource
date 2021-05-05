@@ -28,6 +28,7 @@ module.exports = {
     'linebreak-style': [0, 'error', 'windows'],
     'no-debugger': 'off',
     'no-case-declarations': 'off',
-    'no-invalid-this': 'off'
+    'no-invalid-this': 'off',
+    'no-fallthrough': 'off'
   }
 }

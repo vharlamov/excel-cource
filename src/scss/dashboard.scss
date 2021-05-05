@@ -24,7 +24,7 @@
     }
 
     &__view {
-        max-width: 1000px;
+        max-width: 700px;
         margin: 0 auto;
     }
 
@@ -56,14 +56,15 @@
     &__list-header {
         display: flex;
         justify-content: space-between;
-        color: #202124;
+        color: #62ad00;
         font-weight: 500;
-        font-size: 16px;
+        font-size: 14px;
         margin-bottom: 10px;
         padding: 0 12px;
     }
 
     &__list {
+        text-align: center;
         @include clear-list;
     }
 
@@ -71,7 +72,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 14px 12px 16px;
+        padding: 12px;
         margin-bottom: 10px;
 
         &:hover {

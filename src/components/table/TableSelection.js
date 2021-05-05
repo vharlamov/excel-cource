@@ -1,4 +1,5 @@
 import {$} from '@core/dom'
+import { defaultStyles } from '../../constants'
 import { parseId, Range } from './table.functions'
 
 export class TableSelect {
@@ -7,26 +8,25 @@ export class TableSelect {
     constructor() {
         this.group = []
         this.current = null
+        this.next = null
     }
 
     arrow($root, event) {
         let dir = event.key
-
 
         if (dir.indexOf('Arrow') !== 0) {
             return
         }
         event.preventDefault()
         
-        let $el = $root.find('.' + TableSelect.className)
-        $el = $el ? $el : this.current
+        let $el = this.next || $root.find('.' + TableSelect.className)
 
         const cellIndex = $el.data.id.split(':')
 
         const row = +cellIndex[0]
         const cell = +cellIndex[1]
 
-        let $nextEl
+        let $nextEl = this.next
 
         switch (dir) {
             case 'ArrowUp': 
@@ -44,8 +44,10 @@ export class TableSelect {
         
         if ($nextEl.$el) {
             if (event.shiftKey) {
-                this.group.push($nextEl)
+                this.group = this.rangeGroup($root, $nextEl)
+                $nextEl.$el.focus()
                 this.groupRect($root)
+                this.next = $nextEl
             } else {
                 this.select($root, $nextEl) 
             }
@@ -76,7 +78,7 @@ export class TableSelect {
         })
 
         this.current = cells[0]
-        cells[0].focus()
+        this.current.focus()
         this.groupRect($root)
     }
 
@@ -93,13 +95,14 @@ export class TableSelect {
         })
 
         this.current = cells[0]
-        cells[0].focus()
+        this.current.focus()
         this.groupRect($root)
     }
 
-    selectGroup($root, $el) {
-        const start = parseId(this.current)
-        const end = parseId($el)
+    rangeGroup($root, $el) {
+        const start = parseId(this.current.data.id)
+        const end = parseId($el.data.id)
+        const group = []
 
         this.clear()
 
@@ -112,9 +115,15 @@ export class TableSelect {
         for (let row of rowRange) {
             for (let cell of cellRange) {
                 const $addedCell = $root.find(`[data-id="${row}:${cell}"]`)
-                this.group.push($addedCell)
+                group.push($addedCell)
             }
         }
+
+        return group
+    }
+
+    selectGroup($root, $el) {
+        this.group = this.rangeGroup($root, $el)
             
         this.group.forEach(el => el.addClass(TableSelect.className))
         
@@ -124,11 +133,11 @@ export class TableSelect {
     groupRect($root) {
         this.clearRect()
         
-        let gTop = this.group[0].getCoords().top
-        let gLeft = this.group[0].getCoords().left
-        let gBottom = this.group[this.group.length - 1]
+        const gTop = this.group[0].getCoords().top
+        const gLeft = this.group[0].getCoords().left
+        const gBottom = this.group[this.group.length - 1]
             .getCoords().bottom
-        let gRight = this.group[this.group.length - 1]
+        const gRight = this.group[this.group.length - 1]
             .getCoords().right
 
         if (this.group.length) {
@@ -156,6 +165,7 @@ export class TableSelect {
             }
         })
         this.group = []
+        this.next = null
     }
 
     get ids() {
@@ -171,7 +181,11 @@ export class TableSelect {
     }
 
     applyStyle(style) {
-        this.group.forEach(el => el.css(style))
+        if (style) {
+            this.group.forEach(el => el.css(style))
+        } else {
+            this.group.forEach(el => el.css(defaultStyles))
+        }
     }
 }
 

@@ -4,7 +4,11 @@ import {
     TABLE_RESIZE, 
     APPLY_STYLES, 
     CHANGE_HEADER,
-    FORMULA
+    FORMULA,
+    UPDATE_DATE,
+    CLEAR_STATE,
+    CLEAR_STYLES,
+    SORT_ROWS
 } from "./types";
 
 export function tableResize(data) {
@@ -45,6 +49,32 @@ export function changeHeader(data) {
 export function formula(data) {
     return {
         type: FORMULA,
+        data
+    }
+}
+
+export function updateDate() {
+    return {
+        type: UPDATE_DATE
+    }
+}
+
+export function clearState() {
+    return {
+        type: CLEAR_STATE
+    }
+}
+
+export function sorting(data) {
+    return {
+        type: SORT_ROWS,
+        data
+    }
+}
+
+export function clearStyles(data) {
+    return {
+        type: CLEAR_STYLES,
         data
     }
 }

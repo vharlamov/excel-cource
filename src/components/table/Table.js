@@ -7,13 +7,15 @@ import {
     isCell, 
     isColumn, 
     isRow, 
-    shouldResize 
+    shouldResize, 
+    sortRows
     } from './table.functions';
 import * as actions from '../../redux/actions';
 import { applyTableState } from '../../redux/applyState';
 import { defaultStyles } from '../../constants';
 import { isStyles } from '../../core/utils';
 import { parse } from '../../core/parse';
+import { ActiveRoute } from '../../core/routes/ActiveRoute';
 
 export class Table extends ExcelComponent {
     static className = 'excel__table'
@@ -71,7 +73,7 @@ export class Table extends ExcelComponent {
 
     onMousedown(event) {
         this.isMove = true
-
+        
         const $target = $(event.target)
 
         if (shouldResize(event.target)) {
@@ -119,12 +121,19 @@ export class Table extends ExcelComponent {
         }
         
         if (['Delete', 'Backspace'].includes(event.key)) {
-                if (this.selection.group.length > 1) {
+            if (this.selection.group.length > 1) {
                 event.preventDefault()
                 this.selection.clearGroupText()
+
                 for (let el of this.selection.group) {
-                    this.$emit('tableSelect', el.text())
-                    this.$dispatch('tableSelect')
+                    this.$dispatch(actions.changeText({
+                        id: this.selection.ids,
+                        value: ''
+                    }))
+                    this.$dispatch(actions.formula({
+                        id: this.selection.ids,
+                        value: ''
+                    }))
                 }
             }
         }
@@ -133,11 +142,16 @@ export class Table extends ExcelComponent {
     onInput(event) {
         const value = $(event.target).text()
         this.updateTextInStore(value)
+        this.$emit('tableChangeText', value)
+        this.$dispatch(actions.formula({
+            id: this.selection.current.data.id,
+            value: ''
+        }))
     }
 
     updateTextInStore(value) {
         this.$dispatch(actions.changeText({
-            id: this.selection.current.data.id,
+            id: this.selection.ids,
             value
         }))
     }
@@ -149,26 +163,17 @@ export class Table extends ExcelComponent {
     init() {
         super.init()
 
-        window.onload = () => {
-            const $startCell = this.$root.find('[data-id="0:0"]')
-            this.selection.select(this.$root, $startCell)
-        }
-
         this.$on('formulaText', value => {
             if (value.length > 1) {
-                this.selection.current.text(String(parse(value)))
+                this.selection.group
+                    .forEach(el => el.text(String(parse(value))))
                 if (typeof parse(value) === 'number') {
                     this.$dispatch(actions.formula({
-                        id: this.selection.current.data.id,
+                        id: this.selection.ids,
                         value
                     }))
-                } else {
-                    this.$dispatch(actions.formula({
-                        id: this.selection.current.data.id,
-                        value: ''
-                    }))
-                }
-
+                } 
+                
                 this.updateTextInStore(String(parse(value)))
             }
         })
@@ -185,6 +190,47 @@ export class Table extends ExcelComponent {
             }))
         })
 
-        applyTableState(this.$root)
+
+        this.$on('toolbar:sort', 
+            value => {
+                if (!this.selection.current.data) {
+                    return
+                }
+
+                this.$dispatch(actions.sorting({
+                    sequence: sortRows(
+                        this.store.getState(), 
+                        this.selection.current.data.id, 
+                        value
+                        ),
+                    sortType: value
+                    })
+                )
+                const selected = this.selection.current
+
+                this.$root.html(this.toHTML())
+
+                applyTableState(
+                    this.$root, 
+                    this.store.getState(), 
+                    ActiveRoute.param)
+            }
+        )
+
+        this.$on('toolbar:sortABC', 
+            value => sortRows(
+                this.store.getState(), 
+                this.selection.current.data.id, 
+                value))
+
+        this.$on('toolbar:clearStyles', () => {
+            this.selection.applyStyle('')
+            this.$dispatch(actions.clearStyles(this.selection.ids))
+            })
+
+        window.onload = () => {
+            const $startCell = this.$root.find('[data-id="0:0"]')
+            this.selection.select(this.$root, $startCell)
+        }
     }
  }

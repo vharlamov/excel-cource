@@ -77,8 +77,8 @@ export class TableSelect {
             this.group.push($(el))
         })
 
-        this.current = cells[0]
-        this.current.focus()
+        this.current = $(cells[0])
+        this.current.$el.focus()
         this.groupRect($root)
     }
 
@@ -94,8 +94,8 @@ export class TableSelect {
             this.group.push($(el))
         })
 
-        this.current = cells[0]
-        this.current.focus()
+        this.current = $(cells[0])
+        this.current.$el.focus()
         this.groupRect($root)
     }
 
@@ -152,6 +152,15 @@ export class TableSelect {
 
             $root.append($selectRect.$el)
         }
+    }
+
+    saveGroup($root) {
+      const newGroup = this.group.map(el => {
+        return el.$el = $root.find(`[data-id="${el.data.id}"]`)
+      })
+
+      this.group = newGroup
+      this.current = newGroup[0]
     }
 
     clearGroupText() {

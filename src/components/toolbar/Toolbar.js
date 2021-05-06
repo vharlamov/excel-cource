@@ -35,7 +35,7 @@ export class Toolbar extends ExcelStateComponent {
 
     onClick(event) {
         const $target = $(event.target)
-        const values = ['sortNum', 'sortABC', 'clearStyles']
+        const values = ['sort', 'clearStyles']
         const value = JSON.parse($target.data.value)
 
         if ($target.data.type === 'button') {
@@ -47,7 +47,7 @@ export class Toolbar extends ExcelStateComponent {
                 this.$emit('toolbar:clearStyles')
             }
 
-            if (!values.includes(value)) {
+            if (!value.sort && value !== 'clearStyles') {
                 this.$emit('toolbar:applyStyle', value)
     
                 const key = Object.keys(value)

@@ -193,35 +193,33 @@ export class Table extends ExcelComponent {
 
         this.$on('toolbar:sort', 
             value => {
-                if (!this.selection.current.data) {
+                const current = this.selection.current
+
+                if (!current.data) {
                     return
                 }
-
+                
                 this.$dispatch(actions.sorting({
                     sequence: sortRows(
                         this.store.getState(), 
-                        this.selection.current.data.id, 
+                        current.data.id, 
                         value
                         ),
                     sortType: value
                     })
                 )
-                const selected = this.selection.current
-
+                    
                 this.$root.html(this.toHTML())
-
+                
                 applyTableState(
                     this.$root, 
                     this.store.getState(), 
                     ActiveRoute.param)
-            }
+                
+                    this.selection.saveGroup(this.$root)
+                    this.selection.groupRect(this.$root)
+                  }
         )
-
-        this.$on('toolbar:sortABC', 
-            value => sortRows(
-                this.store.getState(), 
-                this.selection.current.data.id, 
-                value))
 
         this.$on('toolbar:clearStyles', () => {
             this.selection.applyStyle('')

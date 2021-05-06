@@ -163,19 +163,27 @@ export class Table extends ExcelComponent {
     init() {
         super.init()
 
-        this.$on('formulaText', value => {
-            if (value.length > 1) {
+        this.$on('formulaText', data => {
+            if (!data.isDelete && data.text.length > 1) {
                 this.selection.group
-                    .forEach(el => el.text(String(parse(value))))
-                if (typeof parse(value) === 'number') {
+                    .forEach(el => el.text(String(parse(data.text))))
+                if (typeof parse(data.text) === 'number') {
                     this.$dispatch(actions.formula({
                         id: this.selection.ids,
-                        value
+                        value: data.text
                     }))
                 } 
+            } else if (data.isDelete) {
+              this.selection.group
+              .forEach(el => el.text(String(parse(data.text))))
+
+              this.$dispatch(actions.formula({
+                id: this.selection.ids,
+                value: data.text
+              }))
+      }
                 
-                this.updateTextInStore(String(parse(value)))
-            }
+                this.updateTextInStore(String(parse(data.text)))
         })
 
         this.$on('formulaChangeFocus', () => {

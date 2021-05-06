@@ -31,11 +31,22 @@ export class Formula extends ExcelComponent {
     }
 
     onInput(event) {
-        this.$emit('formulaText', $(event.target).text())
+      const isDelete = [
+          'deleteContentForward', 
+          'deleteContentBackward'
+        ].includes(event.inputType)
+
+        this.$emit('formulaText', {
+          text: $(event.target).text(),
+          isDelete: isDelete
+        })
     }
 
     onMousedown(event) {
-        this.$emit('formulaText', $(event.target).text())
+        this.$emit('formulaText', {
+          text: $(event.target).text(),
+          isDelete: false
+        })
     }
 
     init() {
